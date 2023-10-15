@@ -4,9 +4,6 @@ class InputNode:
     def __init__(self):
         self.value = 0
 
-# 0, 1, 2, 3 = up, down, left, right
-
-
 class OutputNode:
     def __init__(self, numIncoming, weights = None, bias = None):
         self.value = 0
@@ -16,7 +13,6 @@ class OutputNode:
         self.weights = weights
         if self.weights == None:
             self.weights = [r.random() for n in range(numIncoming)]
-        
 
 class HiddenNode:
     def __init__(self, numOfInputs, weights = None, bias = None):
@@ -28,28 +24,27 @@ class HiddenNode:
         if self.weights == None:
             self.weights = [r.random() for n in range(numOfInputs)]
 
-
 class Network:
     def __init__(self, numInput, numOutput):
         self.input = [InputNode() for n in range(numInput)]
         self.hidden = []
         self.output = [OutputNode(numInput) for n in range(numOutput)]
 
-    def addHiddenLayer(self):
+    def addHiddenLayer(self, weights = None, bias = None):
         if len(self.hidden) == 0:
-            self.hidden.append([HiddenNode(len(self.input))])
+            self.hidden.append([HiddenNode(len(self.input), weights, bias)])
         else:
-            self.hidden.append([HiddenNode(len(self.hidden[-1]))])
+            self.hidden.append([HiddenNode(len(self.hidden[-1]), weights, bias)])
             for o in range(len(self.output)):
                 self.output[o].weight = [r.random()]
 
-    def addHiddenNode(self, layer):
+    def addHiddenNode(self, layer, weights = None, bias = None):
         if len(self.hidden) == 0:
             self.addHiddenLayer()            
         else:
             #update weights in all nodes in next layer
             #print(self.hidden)
-            self.hidden[layer].append(HiddenNode(len(self.hidden[layer-1]) if layer != 0 else len(self.input)))
+            self.hidden[layer].append(HiddenNode(len(self.hidden[layer-1]) if layer != 0 else len(self.input), weights, bias))
             if layer == len(self.hidden) - 1:
                  for o in range(len(self.output)):
                     self.output[o].weights.append(r.random())               
@@ -101,13 +96,3 @@ class Network:
 
 #hidden = [[], [], []] an n amount of times, so loop through each
 #hidden is of dynamic size
-
-test = Network(2, 4)
-test.addHiddenLayer()
-for i in range(2):
-    test.addHiddenNode(0)
-print(test.hidden)
-test.addHiddenLayer()
-print(test.hidden)
-test.addHiddenNode(1)
-test.forwardPass()

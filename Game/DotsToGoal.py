@@ -21,6 +21,11 @@ class Player:
 
     def down(self):
         self.p.goto(self.p.xcor(), self.p.ycor() - 5)
+    
+    def distToGoal(self, goal):
+        distance = ((goal.xcor() - self.p.xcor())**2 + (goal.ycor() - self.p.ycor())**2)**0.5
+        return distance
+
 
 class Goal:
     def __init__(self):
