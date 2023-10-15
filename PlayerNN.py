@@ -57,7 +57,8 @@ class Network:
                 for h in range(len(self.hidden[layer+1])):
                     self.hidden[layer+1][h].weights.append(r.random())
 
-            
+    def delHiddenNode(self, layer, node):
+        self.hidden[layer][node].value = 0 
 
     def forwardPass(self):
         #for the first pass with no hidden
