@@ -4,6 +4,7 @@ import PlayerNN
 from GeneticAlg import GeneticAlgo as ga
 import turtle as t
 import time
+import random as r
 
 t.tracer(0)
 players = []
@@ -20,7 +21,8 @@ output = [0, 1, 2, 4] #0, 1, 2, 3 = up, down, left, right
 numPlayers = 10
 players = [Player() for i in range(numPlayers)]
 # players = [Player()]
-playerBrains = [PlayerNN.Network(3, 4) for i in range(len(players))]
+playerBrains = [PlayerNN.Network(7, 4) for i in range(len(players))]
+directions = [[0, 0, 0, 0] for i in range(numPlayers)]
 alg = ga(players, goal, playerBrains)
 
 # for i in range(10):
@@ -37,7 +39,6 @@ alg = ga(players, goal, playerBrains)
 #             players[0].right()
 #     time.sleep(0.2)
 
- 
 steps = 20
 for a in range(100):
     t.tracer(0)
@@ -45,15 +46,19 @@ for a in range(100):
         p.center()
     for k in range(steps):
         for i in range(len(players)):
-            move = playerBrains[i].forwardPass((players[i].distToGoal(goal.g)/100.0, players[i].getX()/100, players[i].getY()/100))
+            move = playerBrains[i].forwardPass((players[i].distToGoal(goal.g)/100.0, players[i].getX()/100, players[i].getY()/100, directions[i][0], directions[i][1], directions[i][2], directions[i][3]))
             if move == 0:
                 players[i].up()
+                directions[i] = [1, 0, 0, 0]
             if move == 1:
                 players[i].down()
+                directions[i] = [0, 1, 0, 0]
             if move == 2:
                 players[i].left()
+                directions[i] = [0, 0, 1, 0]
             if move == 3:
                 players[i].right()
+                directions[i] = [0, 0, 0, 1]
 
     numParents = 5
     alg.fitness(goal, players)
