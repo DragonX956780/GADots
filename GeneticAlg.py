@@ -2,13 +2,20 @@ import PlayerNN
 import random as r
 
 class GeneticAlgo:
-    def __init__(self, population, goal):
+    def __init__(self, population, goal, populationBrain):
         self.population = population
+        self.populationBrain = populationBrain
         self.goal = goal
 
-    def fitness(self, goal):
+    def updateBrains(self, brains):
+        self.populationBrains = brains
+    
+    def updatePlayers(self, players):
+        self.population = players
+    
+    def fitness(self, goal, population):
         self.distance = []
-        for p in self.population:
+        for p in population:
             self.distance.append(p.distToGoal(goal.g))
 
     def parentSelection(self, numMax):
@@ -17,13 +24,15 @@ class GeneticAlgo:
         self.maxIndex = []
         self.best = []
         for d in range(len(self.distance)):
-            self.max.sort()
+            self.max.sort(reverse = True)
             if self.distance[d] <= self.max[0]:
                 self.max[0] = self.distance[d]
                 self.maxIndex.append(d)
         
         for i in self.maxIndex[-(numMax+1):-1]:
-            self.best.append(self.population[i])
+            self.best.append(self.populationBrain[i])
+        
+        print(self.max)
         return self.best
 
     def makeKids(self, parents):
@@ -72,16 +81,16 @@ class GeneticAlgo:
             for k in range(len(self.kid.hidden[i])):
                 for w in range(len(self.kid.hidden[i][k].weights)):
                     #change
-                    self.kid.hidden[i][k].weights[w] = r.random() if r.randint(0, 1) == 0 else self.kid.hidden[i][k].weights[w]
+                    self.kid.hidden[i][k].weights[w] = r.random() if r.randint(0, 1000) == 0 else self.kid.hidden[i][k].weights[w]
                     #kill
-                    self.kid.hidden[i][k].value = 0 if r.randint(0,100) == 0 else self.kid.hidden[i][k].value
+                    self.kid.hidden[i][k].value = 0 if r.randint(0,1000) == 0 else self.kid.hidden[i][k].value
 
-                self.kid.hidden[i][k].bias = r.random() if r.randint(0, 1) == 0 else self.kid.hidden[i][k].bias
+                self.kid.hidden[i][k].bias = r.random() if r.randint(0, 1000) == 0 else self.kid.hidden[i][k].bias
 
         for o in range(len(self.kid.output)):
             for w in range(len(self.kid.output[o].weights)):
-                self.kid.output[o].weights[w] = r.random() if r.randint(0, 1) == 0 else self.kid.output[o].weights[w]
-            self.kid.output[o].bias = r.random() if r.randint(0, 1) == 0 else self.kid.output[o].bias
+                self.kid.output[o].weights[w] = r.random() if r.randint(0, 1000) == 0 else self.kid.output[o].weights[w]
+            self.kid.output[o].bias = r.random() if r.randint(0, 1000) == 0 else self.kid.output[o].bias
 
         return self.kid
             

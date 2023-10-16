@@ -56,7 +56,9 @@ class Network:
     def delHiddenNode(self, layer, node):
         self.hidden[layer][node].value = 0 
 
-    def forwardPass(self):
+    def forwardPass(self, input):
+        for i in range(len(self.input)):
+            self.input[i].value = input[i]
         #for the first pass with no hidden
         if (len(self.hidden) == 0):
             for o in range(len(self.output)):

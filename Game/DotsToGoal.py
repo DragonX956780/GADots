@@ -22,9 +22,18 @@ class Player:
     def down(self):
         self.p.goto(self.p.xcor(), self.p.ycor() - 5)
     
+    def center(self):
+        self.p.goto(spawn)
+
     def distToGoal(self, goal):
         distance = ((goal.xcor() - self.p.xcor())**2 + (goal.ycor() - self.p.ycor())**2)**0.5
         return distance
+
+    def getX(self):
+        return self.p.xcor()
+
+    def getY(self):
+        return self.p.ycor()
 
 
 class Goal:
