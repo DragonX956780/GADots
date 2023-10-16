@@ -8,7 +8,7 @@ class GeneticAlgo:
         self.goal = goal
 
     def updateBrains(self, brains):
-        self.populationBrains = brains
+        self.populationBrain = brains
     
     def updatePlayers(self, players):
         self.population = players
@@ -19,20 +19,23 @@ class GeneticAlgo:
             self.distance.append(p.distToGoal(goal.g))
 
     def parentSelection(self, numMax):
-        #says self.max but really smallest distance to goal, i just didn't wanna rename
-        self.max = [9999 for n in range(numMax)]
-        self.maxIndex = []
-        self.best = []
-        for d in range(len(self.distance)):
-            self.max.sort(reverse = True)
-            if self.distance[d] <= self.max[0]:
-                self.max[0] = self.distance[d]
-                self.maxIndex.append(d)
+        temp = zip(self.distance, self.populationBrain)
+        self.sortedList = sorted(temp, key = lambda x:x[0], reverse = True)
+        self.best = [i[1] for i in self.sortedList[0:5]]
+        # #says self.max but really smallest distance to goal, i just didn't wanna rename
+        # self.max = [9999 for n in range(numMax)]
+        # self.maxIndex = []
+        # self.best = []
+        # for d in range(len(self.distance)):
+        #     self.max.sort(reverse = True)
+        #     if self.distance[d] <= self.max[0]:
+        #         self.max[0] = self.distance[d]
+        #         self.maxIndex.append(d)
         
-        for i in self.maxIndex[-(numMax+1):-1]:
-            self.best.append(self.populationBrain[i])
+        # for i in self.maxIndex[-(numMax+1):-1]:
+        #     self.best.append(self.populationBrain[i])
         
-        print(self.max)
+        # print(self.max)
         return self.best
 
     def makeKids(self, parents):
@@ -77,20 +80,29 @@ class GeneticAlgo:
 
     def mutate(self, kid):
         self.kid = kid
+        if(len(self.kid.hidden) == 0):
+            self.kid.addHiddenLayer()
         for i in range(len(self.kid.hidden)):
             for k in range(len(self.kid.hidden[i])):
                 for w in range(len(self.kid.hidden[i][k].weights)):
                     #change
-                    self.kid.hidden[i][k].weights[w] = r.random() if r.randint(0, 1000) == 0 else self.kid.hidden[i][k].weights[w]
+                    self.kid.hidden[i][k].weights[w] = r.random() if r.randint(0, 1) == 0 else self.kid.hidden[i][k].weights[w]
                     #kill
-                    self.kid.hidden[i][k].value = 0 if r.randint(0,1000) == 0 else self.kid.hidden[i][k].value
+                    self.kid.hidden[i][k].value = 0 if r.randint(0,1) == 0 else self.kid.hidden[i][k].value
 
-                self.kid.hidden[i][k].bias = r.random() if r.randint(0, 1000) == 0 else self.kid.hidden[i][k].bias
+                self.kid.hidden[i][k].bias = r.random() if r.randint(0, 1) == 0 else self.kid.hidden[i][k].bias
+                
+                #maybe mutate a new node
+                if r.randint(0, 1) == 0:
+                    self.kid.addHiddenNode(i)
+            #maybe mutate a new layer
+            if r.randint(0, 1) == 0:
+                self.kid.addHiddenLayer()
 
         for o in range(len(self.kid.output)):
             for w in range(len(self.kid.output[o].weights)):
-                self.kid.output[o].weights[w] = r.random() if r.randint(0, 1000) == 0 else self.kid.output[o].weights[w]
-            self.kid.output[o].bias = r.random() if r.randint(0, 1000) == 0 else self.kid.output[o].bias
+                self.kid.output[o].weights[w] = r.random() if r.randint(0, 1) == 0 else self.kid.output[o].weights[w]
+            self.kid.output[o].bias = r.random() if r.randint(0, 1) == 0 else self.kid.output[o].bias
 
         return self.kid
             

@@ -1,4 +1,5 @@
 import random as r
+from math import exp
 
 class InputNode:
     def __init__(self):
@@ -56,6 +57,12 @@ class Network:
     def delHiddenNode(self, layer, node):
         self.hidden[layer][node].value = 0 
 
+    def sigmoid(self, number):
+        return (1/(1+exp(-number)))
+    
+    def showNetwork(self):
+        return self.input, self.hidden, self.output
+    
     def forwardPass(self, input):
         for i in range(len(self.input)):
             self.input[i].value = input[i]
@@ -67,8 +74,8 @@ class Network:
                     tempOutput += self.input[i].value * \
                         self.output[o].weights[i]
 
-                self.output[o].value = tempOutput + self.output[o].bias
-                #print(self.output[o].value)
+                self.output[o].value = self.sigmoid(tempOutput + self.output[o].bias)
+                # print(self.output[o].value)
         else:
             total = len(self.hidden) + 1
             for l in range(total):
@@ -80,22 +87,23 @@ class Network:
                                 for i in range(len(self.input)):
                                     temp += self.input[i].value * \
                                         self.hidden[h][hh].weights[i]
-                                self.hidden[h][hh].value = temp + \
-                                    self.hidden[h][hh].bias
+                                self.hidden[h][hh].value = self.sigmoid(temp + \
+                                    self.hidden[h][hh].bias)
                         else:
                            for hh in range(len(self.hidden[h])):
                                temp = 0
                                for hv in range(len(self.hidden[h-1])):
                                     temp += self.hidden[h-1][hv].value * self.hidden[h][hh].weights[hv]
-                               self.hidden[h][hh].value = temp + self.hidden[h][hh].bias
+                               self.hidden[h][hh].value = self.sigmoid(temp + self.hidden[h][hh].bias)
                 else:
                     for o in range(len(self.output)):
                         tempOutput = 0
                         for h in range(len(self.hidden[-1])):
                             tempOutput += self.hidden[-1][h].value * self.output[o].weights[h]
 
-                        self.output[o].value = tempOutput + self.output[o].bias
+                        self.output[o].value = self.sigmoid(tempOutput + self.output[o].bias)
                         #print(self.output[o].value)
+
         self.tempHighestOutput = -9999
         self.outputIndex = -9999
         for o in range(len(self.output)):
