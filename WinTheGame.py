@@ -30,21 +30,13 @@ playerBrains[0].addHiddenLayer()
 playerBrains[0].addHiddenLayer()
 playerBrains[1].addHiddenLayer()
 playerBrains[1].addHiddenNode(0)
+
 playerBrains[0].addHiddenNode(0)
 playerBrains[0].addHiddenNode(0)
 playerBrains[0].addHiddenNode(0)
 playerBrains[0].addHiddenNode(0)
 
 
-print(len(playerBrains[0].hidden), len(playerBrains[0].hidden[0]))
-print(len(playerBrains[1].hidden), len(playerBrains[1].hidden[0]))
-print()
-
-for i in range(10):
-    thing = alg.makeKids(playerBrains).hidden
-    print(len(thing))
-    print(len(thing[0]))
-    print()
-
+mutation = alg.mutate(thing)
 
 t.done()

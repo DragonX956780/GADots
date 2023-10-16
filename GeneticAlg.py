@@ -12,54 +12,73 @@ class GeneticAlgo:
             self.distance.append(p.distToGoal(goal.g))
 
     def parentSelection(self, numMax):
-        #says max but really smallest distance to goal, i just didn't wanna rename
-        max = [9999 for n in range(numMax)]
-        maxIndex = []
-        best = []
+        #says self.max but really smallest distance to goal, i just didn't wanna rename
+        self.max = [9999 for n in range(numMax)]
+        self.maxIndex = []
+        self.best = []
         for d in range(len(self.distance)):
-            max.sort()
-            if self.distance[d] <= max[0]:
-                max[0] = self.distance[d]
-                maxIndex.append(d)
+            self.max.sort()
+            if self.distance[d] <= self.max[0]:
+                self.max[0] = self.distance[d]
+                self.maxIndex.append(d)
         
-        for i in maxIndex[-(numMax+1):-1]:
-            best.append(self.population[i])
-        return best
+        for i in self.maxIndex[-(numMax+1):-1]:
+            self.best.append(self.population[i])
+        return self.best
 
     def makeKids(self, parents):
-        parent1 = r.choice(parents)
-        parent2 = r.choice(parents)
-        child = PlayerNN.Network(2, 4)
+        self.parent1 = r.choice(parents)
+        self.parent2 = r.choice(parents)
+        self.child = PlayerNN.Network(2, 4)
         
-        layerLoop = min(len(parent1.hidden), len(parent2.hidden))
-        for i in range(layerLoop):
-            winningParent = parent1 if r.randint(0, 1) == 0 else parent2
-            child.addHiddenLayer(winningParent.hidden[i][0].weights, winningParent.hidden[i][0].bias)
-            nodeLoop = min(len(parent1.hidden[i]), len(parent2.hidden[i]))
+        self.layerLoop = min(len(self.parent1.hidden), len(self.parent2.hidden))
+        for i in range(self.layerLoop):
+            self.winningParent = self.parent1 if r.randint(0, 1) == 0 else self.parent2
+            self.child.addHiddenLayer(self.winningParent.hidden[i][0].weights, self.winningParent.hidden[i][0].bias)
+            self.nodeLoop = min(len(self.parent1.hidden[i]), len(self.parent2.hidden[i]))
 
-            for k in range(1, nodeLoop):
-                winningParent = parent1 if r.randint(0, 1) == 0 else parent2
-                child.addHiddenNode(i, winningParent.hidden[i][k].weights, winningParent.hidden[i][k].bias)
+            for k in range(1, self.nodeLoop):
+                self.winningParent = self.parent1 if r.randint(0, 1) == 0 else self.parent2
+                self.child.addHiddenNode(i, self.winningParent.hidden[i][k].weights, self.winningParent.hidden[i][k].bias)
 
+            #maybe add extra nodes
             if r.randint(0, 1) == 0:
-                bigParent = parent1 if max(len(parent1.hidden[i]), len(parent2.hidden[i])) == len(parent1.hidden[i]) else parent2
-                smallParent =  parent2 if max(len(parent1.hidden[i]), len(parent2.hidden[i])) == len(parent1.hidden[i]) else parent1
-                difference = len(bigParent.hidden[i]) - len(smallParent.hidden[i])
+                self.bigParent = self.parent1 if max(len(self.parent1.hidden[i]), len(self.parent2.hidden[i])) == len(self.parent1.hidden[i]) else self.parent2
+                self.smallParent =  self.parent2 if max(len(self.parent1.hidden[i]), len(self.parent2.hidden[i])) == len(self.parent1.hidden[i]) else self.parent1
+                self.difference = len(self.bigParent.hidden[i]) - len(self.smallParent.hidden[i])
 
-                for k in range(difference):
-                    whichOneToAdd = len(bigParent.hidden[i]) - 1 - difference + k #check if error
-                    child.addHiddenNode(i, bigParent.hidden[i][whichOneToAdd])
+                for k in range(self.difference):
+                    self.whichOneToAdd = len(self.bigParent.hidden[i]) - 1 - self.difference + k #check if error
+                    self.child.addHiddenNode(i, self.bigParent.hidden[i][self.whichOneToAdd].weights, self.bigParent.hidden[i][self.whichOneToAdd].bias)
 
+        #maybe add extra layers
         if r.randint(0, 1) == 0:
-            bigParent = parent1 if max(len(parent1.hidden), len(parent2.hidden)) == len(parent1.hidden) else parent2
-            smallParent = parent2 if max(len(parent1.hidden), len(parent2.hidden)) == len(parent1.hidden) else parent1
-            difference = len(bigParent.hidden) - len(smallParent.hidden)
+            self.bigParent = self.parent1 if max(len(self.parent1.hidden), len(self.parent2.hidden)) == len(self.parent1.hidden) else self.parent2
+            self.smallParent = self.parent2 if max(len(self.parent1.hidden), len(self.parent2.hidden)) == len(self.parent1.hidden) else self.parent1
+            self.difference = len(self.bigParent.hidden) - len(self.smallParent.hidden)
 
-            for i in range(difference):
-                whichOneToAdd = len(bigParent.hidden) - 1 - difference + i
-                child.hidden.append(bigParent.hidden[whichOneToAdd])
+            for i in range(self.difference):
+                self.whichOneToAdd = len(self.bigParent.hidden) - 1 - self.difference + i
+                for d in range(self.whichOneToAdd, len(self.bigParent.hidden)):
+                    self.child.addHiddenLayer(self.bigParent.hidden[self.whichOneToAdd][0].weights, self.bigParent.hidden[self.whichOneToAdd][0].bias)
+                    for l in range(1, len(self.bigParent.hidden[self.whichOneToAdd])):
+                        self.child.addHiddenLayer(self.bigParent.hidden[self.whichOneToAdd][l].weights, self.bigParent.hidden[self.whichOneToAdd][l].bias)
 
-        return child
+        return self.child
 
-    def mutate(self):
-        pass
+    def mutate(self, kid):
+        self.kid = kid
+        for i in range(len(self.kid.hidden)):
+            for k in range(len(self.kid.hidden[i])):
+                for w in range(len(self.kid.hidden[i][k].weights)):
+                    self.kid.hidden[i][k].weights[w] = r.random() if r.randint(0, 1) == 0 else self.kid.hidden[i][k].weights[w]
+
+                self.kid.hidden[i][k].bias = r.random() if r.randint(0, 1) == 0 else self.kid.hidden[i][k].bias
+
+        for o in range(len(self.kid.output)):
+            for w in range(len(self.kid.output[o].weights)):
+                self.kid.output[o].weights[w] = r.random() if r.randint(0, 1) == 0 else self.kid.output[o].weights[w]
+            self.kid.output[o].bias = r.random() if r.randint(0, 1) == 0 else self.kid.output[o].bias
+
+        return self.kid
+            

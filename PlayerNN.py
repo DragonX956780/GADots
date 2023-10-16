@@ -36,15 +36,16 @@ class Network:
         else:
             self.hidden.append([HiddenNode(len(self.hidden[-1]), weights, bias)])
             for o in range(len(self.output)):
-                self.output[o].weight = [r.random()]
+                self.output[o].weights = [r.random()]
 
     def addHiddenNode(self, layer, weights = None, bias = None):
         if len(self.hidden) == 0:
             self.addHiddenLayer()            
         else:
+            self.lenInputs = len(self.hidden[layer-1]) if layer != 0 else len(self.input)
+            self.hidden[layer].append(HiddenNode(self.lenInputs, weights, bias))
+
             #update weights in all nodes in next layer
-            #print(self.hidden)
-            self.hidden[layer].append(HiddenNode(len(self.hidden[layer-1]) if layer != 0 else len(self.input), weights, bias))
             if layer == len(self.hidden) - 1:
                  for o in range(len(self.output)):
                     self.output[o].weights.append(r.random())               
