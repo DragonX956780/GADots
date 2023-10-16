@@ -14,29 +14,45 @@ currentLoc = (0, 0)
 goalLoc = (250, 0)
 
 input = [currentLoc, goalLoc]
-output = [0, 1, 2, 3] #up, down, left, right
+output = [0, 1, 2, 4]
+
+#0, 1, 2, 3 = up, down, left, right
 
 players = [Player() for i in range(2)]
 playerBrains = [PlayerNN.Network(2, 4) for i in range(len(players))]
-
 alg = ga(players, goal)
 
-alg.fitness(goal)
-t.tracer(1)
 
-alg.parentSelection(2)
+t.tracer(0)
+for a in range(200):
+    steps = 10
+    for k in range(steps):
+        for i in range(len(playerBrains)):
+            move = playerBrains[i].forwardPass()
+            if move == 0:
+                players[i].up()
+            if move == 1:
+                players[i].down()
+            if move == 2:
+                players[i].left()
+            if move == 3:
+                players[i].right()
 
-playerBrains[0].addHiddenLayer()
-playerBrains[0].addHiddenLayer()
-playerBrains[1].addHiddenLayer()
-playerBrains[1].addHiddenNode(0)
+    alg.fitness(goal)
+    parents = alg.parentSelection(5)
+    children = []
+    for j in range(95):
+        children.append(alg.makeKids(parents))
 
-playerBrains[0].addHiddenNode(0)
-playerBrains[0].addHiddenNode(0)
-playerBrains[0].addHiddenNode(0)
-playerBrains[0].addHiddenNode(0)
+    playerBrains.clear()
 
+    for p in parents:
+        playerBrains.append(j)
+    for c in children:
+        child = alg.mutate(c)
+        playerBrains.append(child)
 
-mutation = alg.mutate(thing)
+    t.sleep(0.2)
+
 
 t.done()

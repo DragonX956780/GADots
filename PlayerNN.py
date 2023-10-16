@@ -93,7 +93,15 @@ class Network:
                             tempOutput += self.hidden[-1][h].value * self.output[o].weights[h]
 
                         self.output[o].value = tempOutput + self.output[o].bias
-                        #print(self.output[o].value) 
+                        #print(self.output[o].value)
+        self.tempHighestOutput = -9999
+        self.outputIndex = -9999
+        for o in range(len(self.output)):
+            if self.output[o].value > self.tempHighestOutput:
+                self.tempHighestOutput = self.output[o].value
+                self.outputIndex = o
+        return self.outputIndex
+
 
 #hidden = [[], [], []] an n amount of times, so loop through each
 #hidden is of dynamic size

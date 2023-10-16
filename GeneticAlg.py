@@ -71,7 +71,10 @@ class GeneticAlgo:
         for i in range(len(self.kid.hidden)):
             for k in range(len(self.kid.hidden[i])):
                 for w in range(len(self.kid.hidden[i][k].weights)):
+                    #change
                     self.kid.hidden[i][k].weights[w] = r.random() if r.randint(0, 1) == 0 else self.kid.hidden[i][k].weights[w]
+                    #kill
+                    self.kid.hidden[i][k].value = 0 if r.randint(0,100) == 0 else self.kid.hidden[i][k].value
 
                 self.kid.hidden[i][k].bias = r.random() if r.randint(0, 1) == 0 else self.kid.hidden[i][k].bias
 
