@@ -45,16 +45,16 @@ class GeneticAlgo:
         
         self.layerLoop = min(len(self.parent1.hidden), len(self.parent2.hidden))
         for i in range(self.layerLoop):
-            self.winningParent = self.parent1 if r.randint(0, 10) == 0 else self.parent2
+            self.winningParent = self.parent1 if r.randint(0, 20) == 0 else self.parent2
             self.child.addHiddenLayer(self.winningParent.hidden[i][0].weights, self.winningParent.hidden[i][0].bias)
             self.nodeLoop = min(len(self.parent1.hidden[i]), len(self.parent2.hidden[i]))
 
             for k in range(1, self.nodeLoop):
-                self.winningParent = self.parent1 if r.randint(0, 10) == 0 else self.parent2
+                self.winningParent = self.parent1 if r.randint(0, 20) == 0 else self.parent2
                 self.child.addHiddenNode(i, self.winningParent.hidden[i][k].weights, self.winningParent.hidden[i][k].bias)
 
             #maybe add extra nodes
-            if r.randint(0, 10) == 0:
+            if r.randint(0, 20) == 0:
                 self.bigParent = self.parent1 if max(len(self.parent1.hidden[i]), len(self.parent2.hidden[i])) == len(self.parent1.hidden[i]) else self.parent2
                 self.smallParent =  self.parent2 if max(len(self.parent1.hidden[i]), len(self.parent2.hidden[i])) == len(self.parent1.hidden[i]) else self.parent1
                 self.difference = len(self.bigParent.hidden[i]) - len(self.smallParent.hidden[i])
@@ -64,7 +64,7 @@ class GeneticAlgo:
                     self.child.addHiddenNode(i, self.bigParent.hidden[i][self.whichOneToAdd].weights, self.bigParent.hidden[i][self.whichOneToAdd].bias)
 
         #maybe add extra layers
-        if r.randint(0, 10) == 0:
+        if r.randint(0, 20) == 0:
             self.bigParent = self.parent1 if max(len(self.parent1.hidden), len(self.parent2.hidden)) == len(self.parent1.hidden) else self.parent2
             self.smallParent = self.parent2 if max(len(self.parent1.hidden), len(self.parent2.hidden)) == len(self.parent1.hidden) else self.parent1
             self.difference = len(self.bigParent.hidden) - len(self.smallParent.hidden)
@@ -86,23 +86,23 @@ class GeneticAlgo:
             for k in range(len(self.kid.hidden[i])):
                 for w in range(len(self.kid.hidden[i][k].weights)):
                     #change
-                    self.kid.hidden[i][k].weights[w] = r.random() if r.randint(0, 10) == 0 else self.kid.hidden[i][k].weights[w]
+                    self.kid.hidden[i][k].weights[w] = r.random() if r.randint(0, 20) == 0 else self.kid.hidden[i][k].weights[w]
                     #kill
-                    self.kid.hidden[i][k].value = 0 if r.randint(0, 10) == 0 else self.kid.hidden[i][k].value
+                    self.kid.hidden[i][k].value = 0 if r.randint(0, 20) == 0 else self.kid.hidden[i][k].value
 
-                self.kid.hidden[i][k].bias = r.random() if r.randint(0, 10) == 0 else self.kid.hidden[i][k].bias
+                self.kid.hidden[i][k].bias = r.random() if r.randint(0, 20) == 0 else self.kid.hidden[i][k].bias
                 
                 #maybe mutate a new node
-                if r.randint(0, 10) == 0:
+                if r.randint(0, 1) == 0:
                     self.kid.addHiddenNode(i)
             #maybe mutate a new layer
-            if r.randint(0, 10) == 0:
+            if r.randint(0, 1) == 0:
                 self.kid.addHiddenLayer()
 
         for o in range(len(self.kid.output)):
             for w in range(len(self.kid.output[o].weights)):
-                self.kid.output[o].weights[w] = r.random() if r.randint(0, 10) == 0 else self.kid.output[o].weights[w]
-            self.kid.output[o].bias = r.random() if r.randint(0, 10) == 0 else self.kid.output[o].bias
+                self.kid.output[o].weights[w] = r.random() if r.randint(0, 20) == 0 else self.kid.output[o].weights[w]
+            self.kid.output[o].bias = r.random() if r.randint(0, 20) == 0 else self.kid.output[o].bias
 
         return self.kid
             

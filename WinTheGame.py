@@ -18,13 +18,18 @@ goalLoc = (250, 0)
 input = [currentLoc, goalLoc]
 output = [0, 1, 2, 4] #0, 1, 2, 3 = up, down, left, right
 
-numPlayers = 10
+numPlayers = 100
 players = [Player() for i in range(numPlayers)]
 # players = [Player()]
-playerBrains = [PlayerNN.Network(7, 4) for i in range(len(players))]
-directions = [[0, 0, 0, 0] for i in range(numPlayers)]
+playerBrains = [PlayerNN.Network(3, 2) for i in range(len(players))]
 alg = ga(players, goal, playerBrains)
 
+# for p in range(len(playerBrains)):
+#     for i in range(2):
+#         playerBrains[p].addHiddenLayer()
+        # for k in range(7):
+        #     playerBrains[p].addHiddenNode(i)
+    
 # for i in range(10):
 #     for b in playerBrains:
 #         move = b.forwardPass((players[0].distToGoal(goal.g), players[0].getX(), players[0].getY()))
@@ -43,22 +48,14 @@ steps = 20
 for a in range(100):
     t.tracer(0)
     for p in players:
-        p.center()
+        p.respawn()
     for k in range(steps):
         for i in range(len(players)):
-            move = playerBrains[i].forwardPass((players[i].distToGoal(goal.g)/100.0, players[i].getX()/100, players[i].getY()/100, directions[i][0], directions[i][1], directions[i][2], directions[i][3]))
+            move = playerBrains[i].forwardPass((players[i].distToGoal(goal.g)-500, players[i].getX(), players[i].getY()))
             if move == 0:
-                players[i].up()
-                directions[i] = [1, 0, 0, 0]
-            if move == 1:
-                players[i].down()
-                directions[i] = [0, 1, 0, 0]
-            if move == 2:
                 players[i].left()
-                directions[i] = [0, 0, 1, 0]
-            if move == 3:
+            if move == 1:
                 players[i].right()
-                directions[i] = [0, 0, 0, 1]
 
     numParents = 5
     alg.fitness(goal, players)
@@ -75,8 +72,8 @@ for a in range(100):
         child = alg.mutate(c)
         playerBrains.append(child)
 
-    for i in playerBrains:
-        print(i.showNetwork())
+    # for i in playerBrains:
+    #     print(i.showNetwork())
     alg.updateBrains(playerBrains)
     # print(children[0].showNetwork())
 
@@ -86,10 +83,10 @@ for a in range(100):
         print(len(playerBrains), len(parents), len(children))
         quit()
 
-    t.tracer(1)
+    time.sleep(0.1)
     t.update()
     # steps += 2
-    time.sleep(0.1)
+    print(a)
 
 print("DONE")
 print(playerBrains[0].showNetwork())

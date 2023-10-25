@@ -13,7 +13,7 @@ class OutputNode:
             self.bias = r.random()
         self.weights = weights
         if self.weights == None:
-            self.weights = [r.random() for n in range(numIncoming)]
+            self.weights = [r.uniform(-0.1,0.1) for n in range(numIncoming)]
 
 class HiddenNode:
     def __init__(self, numOfInputs, weights = None, bias = None):
@@ -23,7 +23,7 @@ class HiddenNode:
             self.bias = r.random()
         self.weights = weights
         if self.weights == None:
-            self.weights = [r.random() for n in range(numOfInputs)]
+            self.weights = [r.uniform(-0.1,0.1) for n in range(numOfInputs)]
 
 class Network:
     def __init__(self, numInput, numOutput):
@@ -37,7 +37,7 @@ class Network:
         else:
             self.hidden.append([HiddenNode(len(self.hidden[-1]), weights, bias)])
             for o in range(len(self.output)):
-                self.output[o].weights = [r.random()]
+                self.output[o].weights = [r.uniform(-0.1,0.1)]
 
     def addHiddenNode(self, layer, weights = None, bias = None):
         if len(self.hidden) == 0:
@@ -49,7 +49,7 @@ class Network:
             #update weights in all nodes in next layer
             if layer == len(self.hidden) - 1:
                  for o in range(len(self.output)):
-                    self.output[o].weights.append(r.random())               
+                    self.output[o].weights.append(r.uniform(-0.1,0.1))               
             else:
                 for h in range(len(self.hidden[layer+1])):
                     self.hidden[layer+1][h].weights.append(r.random())
@@ -64,8 +64,11 @@ class Network:
         return self.input, self.hidden, self.output
     
     def forwardPass(self, input):
-        for i in range(len(self.input)):
-            self.input[i].value = input[i]
+        try:
+            for i in range(len(self.input)):
+                self.input[i].value = input[i]
+        except:
+            pass
         #for the first pass with no hidden
         if (len(self.hidden) == 0):
             for o in range(len(self.output)):
